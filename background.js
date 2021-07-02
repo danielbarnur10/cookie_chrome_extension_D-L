@@ -63,7 +63,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                         expiry = parseInt(datum.expirationDate)
                     }
                     if (datum['name'] == "li_at") {
-                        cookies = cookies.concat(`"`, datum['name'], "=", datum['value'], `"`)
+                        cookies = cookies.concat(JSON.stringify({name: datum['name'],value: datum['value']}))
                        //saves the cookie to storage
                         chrome.storage.local.set({key: cookies}, ()=> {
                             console.log('Value is set to ' + cookies);

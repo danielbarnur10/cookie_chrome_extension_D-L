@@ -1,32 +1,48 @@
+
 console.log("I'm the popup.")
 
-// const request = require('request');
-// const updateClient=(postData)=>{
-//   const clientServerOptions = {
-//     uri:'http://localhost:5000/api',
-//     body:JSON.stringify(postData),
-//     method:'POST',
-//     headers:{'Content-Type': 'application/json'}
-//   }
-//   request(clientServerOptions,(err, res)=>{
-//     console.log(err,res.body);
-//     return;
-//   });
-// }
+
 
 //sending message to background and recieving its content
 chrome.runtime.sendMessage({
   message:'get_cookie',
 
-},response=>{
-  if(response.message === 'success'){
-      console.log('success')
+},messageRes=>{
+  if(messageRes.message === 'success'){
+    console.log('success')
 
-      // updateClient(response.payload)
-
-      document.querySelector('div').innerHTML= `The cookie is: ${response.payload} `
+      //posting to url:
+      let url="http://localhost:5004/api";
+      if(url){
+        
+        let cookie=JSON.parse(messageRes.payload)
+        // console.log(messageRes.payload)
+        postData(url, {cookie: cookie.value})
+      }
+      let cookie=JSON.parse(messageRes.payload)
+      document.querySelector('div').innerHTML= `The cookie is: <p>${cookie.name} =</p> ${cookie.value} `
   }
 })
+
+
+
+// Example POST method implementation:
+const postData = async (url = '', data = {})=> {
+  // Default options are marked with *
+  console.log("data check on the POST",data)
+  const response = await fetch(url, {
+    method: 'POST', // *GET, POST, PUT, DELETE, etc.
+    headers: {
+      'Content-Type': 'application/json'
+      // 'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: JSON.stringify(data) // body data type must match "Content-Type" header
+  });
+
+  return response.json(); // parses JSON response into native JavaScript objects
+}
+
+
 
 //get value from storage
 // chrome.storage.local.get(['key'], function(result) {
