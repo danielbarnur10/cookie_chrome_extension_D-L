@@ -7,7 +7,8 @@ chrome.runtime.onInstalled.addListener(() => {
     
     // setting state
     chrome.storage.local.set({
-        key: 'no cookies yet(li_at)' 
+        key: 'no cookies yet(li_at)' ,
+        value: '0'
     })
 });
 

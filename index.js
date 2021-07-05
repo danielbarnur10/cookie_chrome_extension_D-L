@@ -8,7 +8,10 @@ app.get('/', (req, res) => {
   res.send("hello");
 })
 app.post('/api', function (req, res) {
-  res.send({cookie: req.body.cookie})
+  // res.send("post request")
+  // {profile_pk: req.body.profile_pk , li_at: req.body.li_at}
+  console.log("post here", req.body)
+  res.send( req.body)
 })
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
