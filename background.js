@@ -6,22 +6,24 @@ chrome.runtime.onInstalled.addListener(() => {
     // this runs ONE TIME ONLY (unless the user reinstalls your extension)
     
     // setting state
-    chrome.storage.local.set({
-        key: 'no cookies yet(li_at)' ,
-        value: '0'
+    
+        chrome.storage.local.set( {li_at: 'No cookies yet(li_at)' })
+        chrome.storage.local.set( {JSESSIONID:"No cookies yet(JSESSIONID)"})
+        chrome.storage.local.set( {name:"No name"})
+        chrome.storage.local.set( {img:"No img"})
+        chrome.storage.local.set( {link:"No link"})
+
     })
-});
-
-
 //test
 // getting state
-chrome.storage.local.get("key", (retrieved_data) => { console.log(retrieved_data.key)});
+console.log("======================================")
+chrome.storage.local.get(["li_at","JSESSIONID"], (retrieved_data) => { console.log(retrieved_data)});
 
 
-//message listener and changes the name
+//message listener sends back the info to popup or more
 chrome.runtime.onMessage.addListener((req, sender, sendRes) => {
     if (req.message === 'get_cookie') {
-        chrome.storage.local.get('key', data => {
+        chrome.storage.local.get(["li_at","JSESSIONID"], data => {
             if (chrome.runtime.lastError) {
                 sendRes({
                     messsage: 'fail'
@@ -29,10 +31,15 @@ chrome.runtime.onMessage.addListener((req, sender, sendRes) => {
                 console.log('fail')
                 return;
             }
-          
+            console.log("from the background object",data)
             sendRes({
                 message: 'success',
-                payload: data.key
+                li_at: data.li_at,
+                JSESSIONID: data.JSESSIONID,
+                // later ill send:
+                name:"",
+                img:"",
+                link:""
             })
 
         })
@@ -40,22 +47,13 @@ chrome.runtime.onMessage.addListener((req, sender, sendRes) => {
 
     }
 })
-
-
-
-
-  
-
-
-
-
+//gets the cookies li_at and JSSESION
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (changeInfo.status === 'complete' && /^http(s?)/.test(tab.url)) {
         console.log(tab.url)
 
-
         let cookies = getCookiesForURL(tab.url).then(data => {
-
+            //iterates through the cookies and parses them
             if (Object.keys(data).length > 0) {
                 let cookies = '';
                 data.forEach(datum => {
@@ -63,21 +61,28 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                     if (datum.expirationDate) {
                         expiry = parseInt(datum.expirationDate)
                     }
+                    //li_at
                     if (datum['name'] == "li_at") {
-                        cookies = cookies.concat(JSON.stringify({name: datum['name'],value: datum['value']}))
+                        //saves the cookie to storage
+                            chrome.storage.local.set({li_at:datum['value']});
+                    }   
+                    //JSSESION
+                    if (datum['name'] == "JSESSIONID") {
                        //saves the cookie to storage
-                        chrome.storage.local.set({key: cookies}, ()=> {
-                            console.log('Value is set to ' + cookies);
-                        });
+                       chrome.storage.local.set({JSESSIONID:datum['value']});
                     }
                 })
 
             }
-
+            //gets the objects and shows them
+            chrome.storage.local.get(["li_at", "JSESSIONID", "name", "link", "img"],(result)=> {
+                console.log("result:",result )
+            });
         })
 
     }
 })
+
 
 
 let getHost = param => {
@@ -100,6 +105,38 @@ let getCookiesForURL = url => {
         });
     });
 };
+
+
+//parsing the cookie
+// chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+//     if (changeInfo.status === 'complete' && /^http(s?)/.test(tab.url)) {
+//         console.log(tab.url)
+
+
+//         let cookies = getCookiesForURL(tab.url).then(data => {
+
+//             if (Object.keys(data).length > 0) {
+//                 let cookies = '';
+//                 data.forEach(datum => {
+//                     let expiry = 0;
+//                     if (datum.expirationDate) {
+//                         expiry = parseInt(datum.expirationDate)
+//                     }
+//                     if (datum['name'] == "li_at") {
+//                         cookies = cookies.concat(JSON.stringify({name: datum['name'],value: datum['value']}))
+//                        //saves the cookie to storage
+//                         chrome.storage.local.set({key: cookies}, ()=> {
+//                             console.log('Value is set to ' + cookies);
+//                         });
+//                     }
+//                 })
+
+//             }
+
+//         })
+
+//     }
+// })
 
 
 // //injecting the background 

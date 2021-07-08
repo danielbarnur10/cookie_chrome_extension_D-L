@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express()
-const port = 5004;
+const port = 5000;
 app.use(express.urlencoded({extended:false}))
 app.use(express.json())
 // app.use(express.static('public'))
