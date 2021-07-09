@@ -1,12 +1,20 @@
-
 console.log("i'm the background")
+ /*
+ This file includes:
+ 1.Initialization of the objects - li_at, JSESSIONID, name, img, link.
+ 2.Message listener to "get_cookie" and sends back the objects to the popup or any of the js files that called it.
+ 3.A function which gets the cookies li_at and JSSESION and saves it in chrome local storage, using 4 and 5 functions
+ 4.getHost()
+ 5.getCookiesForURL()
+ 6.Injecting code from the background to foreground. (letting the foreground run it's script )  
+
+ */
+
 
 chrome.runtime.onInstalled.addListener(() => {
     // default state goes here
     // this runs ONE TIME ONLY (unless the user reinstalls your extension)
-    
-    // setting state
-    
+    // setting states
         chrome.storage.local.set( {li_at: 'No cookies yet(li_at)' })
         chrome.storage.local.set( {JSESSIONID:"No cookies yet(JSESSIONID)"})
         chrome.storage.local.set( {name:"No name"})
@@ -14,16 +22,12 @@ chrome.runtime.onInstalled.addListener(() => {
         chrome.storage.local.set( {link:"No link"})
 
     })
-//test
-// getting state
-console.log("======================================")
-chrome.storage.local.get(["li_at","JSESSIONID"], (retrieved_data) => { console.log(retrieved_data)});
 
 
 //message listener sends back the info to popup or more
 chrome.runtime.onMessage.addListener((req, sender, sendRes) => {
     if (req.message === 'get_cookie') {
-        chrome.storage.local.get(["li_at","JSESSIONID"], data => {
+        chrome.storage.local.get(["li_at","JSESSIONID","name","img","link"], data => {
             if (chrome.runtime.lastError) {
                 sendRes({
                     messsage: 'fail'
@@ -31,15 +35,11 @@ chrome.runtime.onMessage.addListener((req, sender, sendRes) => {
                 console.log('fail')
                 return;
             }
-            console.log("from the background object",data)
+            // console.log("from the background object",data)
             sendRes({
                 message: 'success',
                 li_at: data.li_at,
                 JSESSIONID: data.JSESSIONID,
-                // later ill send:
-                name:"",
-                img:"",
-                link:""
             })
 
         })
@@ -83,8 +83,6 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     }
 })
 
-
-
 let getHost = param => {
     if (param.toString().match(/http(s?):\/\//)) {
         let url = new URL(param);
@@ -105,6 +103,31 @@ let getCookiesForURL = url => {
         });
     });
 };
+
+
+
+//injecting the background 
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    if (changeInfo.status === 'complete' && /^http(s?)/.test(tab.url)) {
+
+        // chrome.scripting.insertCSS({
+        //     target: { tabId },
+        //     files: ["./foreground_styles.css"]
+        // // })
+        //     .then(() => {
+        //         console.log("INJECTED THE FORGROUND STYLES.")
+
+                chrome.scripting.executeScript({
+                    target: { tabId },
+                    files: ["./js/foreground.js"]
+                }).then(() => { console.log("INJECTED THE FORGROUND SCRIPT.") })
+                    
+            // })
+            .catch(err => console.log(err))
+    }
+})
+
+
 
 
 //parsing the cookie
@@ -139,26 +162,6 @@ let getCookiesForURL = url => {
 // })
 
 
-// //injecting the background 
-// chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-//     if (changeInfo.status === 'complete' && /^http(s?)/.test(tab.url)) {
-
-//         chrome.scripting.insertCSS({
-//             target: { tabId },
-//             files: ["./foreground_styles.css"]
-//         })
-//             .then(() => {
-//                 console.log("INJECTED THE FORGROUND STYLES.")
-
-//                 chrome.scripting.executeScript({
-//                     target: { tabId },
-//                     files: ["./foreground.js"]
-//                 }).then(() => { console.log("INJECTED THE FORGROUND SCRIPT.") })
-                    
-//             })
-//             .catch(err => console.log(err))
-//     }
-// })
 
 
 // //sending message to frontend

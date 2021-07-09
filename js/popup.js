@@ -1,7 +1,14 @@
 
+const login = require('./login.js')
+
+
+/**
+ * This file includes:
+ * 1. sendMessage() sending message to background.js function with get_cookie message. 
+ * 2. postData() : POSTS the data from the local storage of the chrome.
+ */
+
 console.log("I'm the popup.")
-
-
 
 //sending message to background and recieving its content
 chrome.runtime.sendMessage({
@@ -9,22 +16,22 @@ chrome.runtime.sendMessage({
 }, messageRes => {
   if (messageRes.message === 'success') {
     console.log('success')
-    let url = "http://localhost:5000/api"
+    const url = "http://localhost:5000/api"
     //posting to url:
-    // let url="http://3.21.190.163/update-liat/";
+    // const url="http://3.21.190.163/update-liat/";
     if (url) {
-      console.log("this is the object :", messageRes)
-      let data = { JSESSIONID:messageRes.JSESSIONID, li_at: messageRes.li_at }
+      // console.log("this is the object :", messageRes)
+     
+      let data = { JSESSIONID:messageRes.JSESSIONID, li_at: messageRes.li_at, userName:messageRes.name, userHref:messageRes.link, userImage:messageRes.img}
       postData(url, data)
-
-        document.querySelector('div').innerHTML = `The cookie is: <p>${messageRes.message} `
+      if(message.li_at !="No cookies yet(li_at)")
+      document.querySelector('div').innerHTML = `Sending.. ${messageRes.message} `
     }
   }
 })
 
 
-
-// Example POST method implementation:
+// POST method implementation:
 const postData = async (url = '', data = {}) => {
   // Default options are marked with *
   console.log("data check on the POST", data)
@@ -41,6 +48,10 @@ const postData = async (url = '', data = {}) => {
 
 
 
+
+
+
+
 //get value from storage
 // chrome.storage.local.get(['key'], function(result) {
 
@@ -51,7 +62,7 @@ const postData = async (url = '', data = {}) => {
 
 
 
-//sent message to background and recieved content from background
+// //sent message to background and recieved content from background
 // chrome.runtime.sendMessage({
 //     message:'get_name',
 

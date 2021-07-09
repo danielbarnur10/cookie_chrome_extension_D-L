@@ -1,17 +1,17 @@
 {
-    "name": "Chrome Extension MV3",
-    "description": "Learning all about Chrome Extensions Manifest Version 3!",
+    "name": "Chrome Extension MV3 (D&L)",
+    "description": "Chrome Extensions Manifest Version 3! Cookie sender",
     "version": "0.1.0",
     "manifest_version": 3,
    
     "background": {
-        "service_worker": "background.js"
+        "service_worker": "./background.js"
     },
     "action": {
-        "default_popup": "popup.html"
+        "default_popup": "./html/popup.html"
        
     },
-    "options_page": "options.html",
+    "options_page": "./html/options.html",
     "permissions": [
         "storage",
         "activeTab",
@@ -20,7 +20,6 @@
         "cookies"
     ],
     "host_permissions": [
-        "https://www.google.com/*",
         "<all_urls>"
     ]
 }
