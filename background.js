@@ -15,19 +15,74 @@ chrome.runtime.onInstalled.addListener(() => {
     // default state goes here
     // this runs ONE TIME ONLY (unless the user reinstalls your extension)
     // setting states
-        chrome.storage.local.set( {li_at: 'No cookies yet(li_at)' })
-        chrome.storage.local.set( {JSESSIONID:"No cookies yet(JSESSIONID)"})
-        chrome.storage.local.set( {name:"No name"})
-        chrome.storage.local.set( {img:"No img"})
-        chrome.storage.local.set( {link:"No link"})
+        chrome.storage.local.set( {li_at: undefined })
+        chrome.storage.local.set( {JSESSIONID:undefined})
+        chrome.storage.local.set( {name:undefined})
+        chrome.storage.local.set( {img:undefined})
+        chrome.storage.local.set( {link:undefined})
+        chrome.storage.local.set({sessionid:undefined})
 
     })
+
+    
+//injecting the background  and scraping the profile from homepage
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    if (changeInfo.status === 'complete' && /^http(s?)/.test(tab.url)) {
+
+        // chrome.scripting.insertCSS({
+        //     target: { tabId },
+        //     files: ["./foreground_styles.css"]
+        // // })
+        //     .then(() => {
+        //         console.log("INJECTED THE FORGROUND STYLES.")
+
+                chrome.scripting.executeScript({
+                    target: { tabId },
+                    files: ["./js/foreground.js"]
+                }).then(() => { console.log("INJECTED THE FORGROUND SCRIPT.") })
+                    
+            // })
+            .catch(err => console.log(err))
+    }
+})
+
 
 
 //message listener sends back the info to popup or more
 chrome.runtime.onMessage.addListener((req, sender, sendRes) => {
     if (req.message === 'get_cookie') {
-        chrome.storage.local.get(["li_at","JSESSIONID","name","img","link"], data => {
+        chrome.storage.local.get(["li_at","JSESSIONID","name","img","link","sessionid"], data => {
+            if (chrome.runtime.lastError) {
+                sendRes({
+                    messsage: 'fail'
+                })
+                console.log('fail')
+                return;
+            }
+            console.log("from the background object",data)
+            sendRes({
+                message: 'success',
+                payload:data,
+                li_at: data.li_at,
+                JSESSIONID: data.JSESSIONID,
+                sessionid:data.sessionid,
+                userName: data.name,
+                userHref: data.link,
+                userImage: data.img,
+            })
+
+        })
+        return true;
+
+    }
+})
+
+//1.
+//leadhunt session cookie save 
+//message listener sends back the info to popup or more
+chrome.runtime.onMessage.addListener((req, sender, sendRes) => {
+    if (req.message === 'get_leadhunt') {
+        chrome.storage.local.get(["sessionid"], data => {
             if (chrome.runtime.lastError) {
                 sendRes({
                     messsage: 'fail'
@@ -38,8 +93,7 @@ chrome.runtime.onMessage.addListener((req, sender, sendRes) => {
             // console.log("from the background object",data)
             sendRes({
                 message: 'success',
-                li_at: data.li_at,
-                JSESSIONID: data.JSESSIONID,
+                sessionid:data.sessionid,
             })
 
         })
@@ -47,7 +101,10 @@ chrome.runtime.onMessage.addListener((req, sender, sendRes) => {
 
     }
 })
-//gets the cookies li_at and JSSESION
+
+
+//
+//gets the cookies li_at and JSSESION and sessionid
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (changeInfo.status === 'complete' && /^http(s?)/.test(tab.url)) {
         console.log(tab.url)
@@ -70,14 +127,22 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                     if (datum['name'] == "JSESSIONID") {
                        //saves the cookie to storage
                        chrome.storage.local.set({JSESSIONID:datum['value']});
-                    }
+                    } 
+                    //sessionid *only from leadhunt website
+                    if (datum['name'] == "sessionid") {
+                        //saves the cookie to storage
+                        chrome.storage.local.set({sessionid:datum['value']});
+                     }
                 })
 
             }
             //gets the objects and shows them
-            chrome.storage.local.get(["li_at", "JSESSIONID", "name", "link", "img"],(result)=> {
-                console.log("result:",result )
-            });
+            // chrome.storage.local.get(["li_at", "JSESSIONID", "name", "link", "img"],(result)=> {
+            //     console.log("from function background result:",result )
+            // });
+            // chrome.storage.local.get(["sessionid"],(result)=> {
+            //     console.log("from function background result sessionid:",result )
+            // });
         })
 
     }
@@ -103,29 +168,6 @@ let getCookiesForURL = url => {
         });
     });
 };
-
-
-
-//injecting the background 
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    if (changeInfo.status === 'complete' && /^http(s?)/.test(tab.url)) {
-
-        // chrome.scripting.insertCSS({
-        //     target: { tabId },
-        //     files: ["./foreground_styles.css"]
-        // // })
-        //     .then(() => {
-        //         console.log("INJECTED THE FORGROUND STYLES.")
-
-                chrome.scripting.executeScript({
-                    target: { tabId },
-                    files: ["./js/foreground.js"]
-                }).then(() => { console.log("INJECTED THE FORGROUND SCRIPT.") })
-                    
-            // })
-            .catch(err => console.log(err))
-    }
-})
 
 
 

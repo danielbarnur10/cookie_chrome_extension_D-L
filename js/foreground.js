@@ -17,7 +17,7 @@
  const userName = document.querySelector(".profile-rail-card__actor-link.t-16.t-black.t-bold")
                             .innerText
 
-//  console.log(userName,userImage, userHref)
+ console.log(userName,userImage, userHref)
 
  chrome.storage.local.set( {name:userName})
  chrome.storage.local.set( {img:userImage})
