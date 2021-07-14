@@ -11,15 +11,15 @@
     <title>Document</title>
     <style>
         body{
-            width: 250px;
-            height: 150px;
+            width: 270px;
+            height: 170px;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             
-            color:aliceblue;
+            color: black;
             font-size: 15px;
-            background-color: rebeccapurple;
+            
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
             text-align: center;
         }
@@ -29,19 +29,20 @@
         
     </style>
 </head>
-<body>
+<body class=".bg-light">
     <div class="container-sm">
-        <h4>D&L</h4>
+        <h3>D&L</h3>
             
-            <span>go to leadhunt webpage-> login -> press "Get leadhunt" -><br>Go to Linkin -> login-> press "Get LinkedIn"</span>
+            <span class="text-secondary">go to leadhunt webpage-> login -> press "Get leadhunt" -><br>Go to Linkin -> login-> press "Get LinkedIn"</span>
             <div>
-            <p class="signin">Login to LeadHunt <button id= "popup" class="btn btn-Link">here</button></p>
+            <p class="signin">Login to LeadHunt <button id= "popup" class="btn btn-link">here</button></p>
 
                 <button type="button" id="leadhunt" class="btn btn-primary">Connect LeadHunt</button>
                 <p id="leadhunt_success"></p>
                 <button type="button" id="linkedin" class="btn btn-primary">Connect Profile to LinkedIn</button>
                 <p id="linkedin_success"></p>
-                <button type="button" id="clearall" class="btn btn-primary">Clear Data</button>
+                <button type="button" id="clearall" class="btn btn-danger">Clear Data</button>
+                    
             </div>
         
    
