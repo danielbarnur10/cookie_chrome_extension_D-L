@@ -6,7 +6,22 @@
  * 2. postData() : POSTS the data from the local storage of the chrome.
  */
 console.log("I'm the popup.");
- 
+document.getElementById("popup").addEventListener("click", () => {
+  let w=780, h=600, scroll= 'yes' ;
+  let winName="popup", url="http://18.119.98.104";
+
+  LeftPosition = (screen.width) ? (screen.width-w)/2 : 0;
+  TopPosition = (screen.height) ? (screen.height-h)/2 : 0;
+  settings =
+  'height='+h+',width='+w+',top='+TopPosition+',left='+LeftPosition+',scrollbars='+scroll+',resizable'
+  window.open(url,winName,settings)
+  return false;
+ })
+function popup(url){
+  
+  window.open(url,'popup','width=600,height=600'); 
+  }
+
 document.getElementById("clearall").addEventListener("click", () => {
 chrome.storage.local.clear(()=> {
   var error = chrome.runtime.lastError;
@@ -50,12 +65,9 @@ document.getElementById("linkedin").addEventListener("click", () => {
           const  keys =  Object.keys(data);
           keys.forEach((key, index) => {
                if(data[key] == undefined){
-                console.log("Im inside the loopIm inside the loopIm inside the loop",key)
-                undefinedObject =true
-                
-
-                }
-
+                //console.log("Im inside the loopIm inside the loopIm inside the loop",key)
+                //"sessionid =vl7arvmai9tbpy77cv2c7lhainyjhu4f "
+                undefinedObject =true }
               });
           if (!undefinedObject){
             postData(url, data);

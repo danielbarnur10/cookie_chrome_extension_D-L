@@ -9,7 +9,7 @@ console.log("i'm the background")
  6.Injecting code from the background to foreground. (letting the foreground run it's script )  
 
  */
-
+ 
 
 chrome.runtime.onInstalled.addListener(() => {
     // default state goes here
