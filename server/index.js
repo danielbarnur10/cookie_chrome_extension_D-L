@@ -10,7 +10,8 @@ app.get('/', (req, res) => {
 app.post('/api', function (req, res) {
 
   console.log("post here", req.body)
-  res.send( req.body)
+  //res.send( req.body)
+  res.send({sessionCode:"code"})
 })
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)

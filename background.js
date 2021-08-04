@@ -21,6 +21,8 @@ chrome.runtime.onInstalled.addListener(() => {
         chrome.storage.local.set( {img:undefined})
         chrome.storage.local.set( {link:undefined})
         chrome.storage.local.set({sessionid:undefined})
+        chrome.storage.local.set({sessionCode:undefined})
+
 
     })
 
@@ -51,7 +53,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 //message listener sends back the info to popup or more
 chrome.runtime.onMessage.addListener((req, sender, sendRes) => {
     if (req.message === 'get_cookie') {
-        chrome.storage.local.get(["li_at","JSESSIONID","name","img","link","sessionid"], data => {
+        chrome.storage.local.get(["li_at","JSESSIONID","name","img","link","sessionid","sessionCode"], data => {
             if (chrome.runtime.lastError) {
                 sendRes({
                     messsage: 'fail'
@@ -69,6 +71,7 @@ chrome.runtime.onMessage.addListener((req, sender, sendRes) => {
                 userName: data.name,
                 userHref: data.link,
                 userImage: data.img,
+                sessionCode:data.sessionCode,
             })
 
         })

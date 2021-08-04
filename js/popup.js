@@ -6,30 +6,42 @@
  * 2. postData() : POSTS the data from the local storage of the chrome.
  */
 console.log("I'm the popup.");
+
+//popup link to leadhunt
 document.getElementById("popup").addEventListener("click", () => {
-  let w=780, h=600, scroll= 'yes' ;
-  let winName="popup", url="http://18.119.98.104";
+  let w = 780,
+    h = 600,
+    scroll = "yes";
+  let winName = "popup",
+    url = "http://18.119.98.104";
 
-  LeftPosition = (screen.width) ? (screen.width-w)/2 : 0;
-  TopPosition = (screen.height) ? (screen.height-h)/2 : 0;
+  LeftPosition = screen.width ? (screen.width - w) / 2 : 0;
+  TopPosition = screen.height ? (screen.height - h) / 2 : 0;
   settings =
-  'height='+h+',width='+w+',top='+TopPosition+',left='+LeftPosition+',scrollbars='+scroll+',resizable'
-  window.open(url,winName,settings)
+    "height=" +
+    h +
+    ",width=" +
+    w +
+    ",top=" +
+    TopPosition +
+    ",left=" +
+    LeftPosition +
+    ",scrollbars=" +
+    scroll +
+    ",resizable";
+  window.open(url, winName, settings);
   return false;
- })
-function popup(url){
-  
-  window.open(url,'popup','width=600,height=600'); 
-  }
-
-document.getElementById("clearall").addEventListener("click", () => {
-chrome.storage.local.clear(()=> {
-  var error = chrome.runtime.lastError;
-  console.log("cleared storage.local!")
-  if (error) {
-      console.error(error);
-  }
 });
+
+//clear data button
+document.getElementById("clearall").addEventListener("click", () => {
+  chrome.storage.local.clear(() => {
+    var error = chrome.runtime.lastError;
+    console.log("cleared storage.local!");
+    if (error) {
+      console.error(error);
+    }
+  });
 });
 
 //onclick do this function linkedin
@@ -43,42 +55,46 @@ document.getElementById("linkedin").addEventListener("click", () => {
     (messageRes) => {
       if (messageRes.message === "success") {
         console.log("success");
-        const url = "http://localhost:5000/api";
-        //posting to url:
-        // const url="http://3.21.190.163/update-liat/";
+
+        //const url = "http://localhost:5000/api";
+
+        // const url="http://3.21.190.163/update-liat/";//send to production
+
+        const url = `http://127.0.0.1:8000/create-liat`; //test  ${messageRes.userHref}
         if (url) {
           // console.log("this is the object :", messageRes)
 
           let data = {
             JSESSIONID: messageRes.JSESSIONID,
             li_at: messageRes.li_at,
-            sessionid:messageRes.sessionid,
+            sessionid: messageRes.sessionid,
             userName: messageRes.userName,
             userHref: messageRes.userHref,
             userImage: messageRes.userImage,
+            sessionCode: messageRes.sessionCode,
           };
-          console.log("popup get_cookie payload data",data)
-          console.log("im the ", messageRes)
-          console.log("im the ",)
-          console.log("im the ",)
-          let undefinedObject = false;
-          const  keys =  Object.keys(data);
-          keys.forEach((key, index) => {
-               if(data[key] == undefined){
-                //console.log("Im inside the loopIm inside the loopIm inside the loop",key)
-                //"sessionid =vl7arvmai9tbpy77cv2c7lhainyjhu4f "
-                undefinedObject =true }
-              });
-          if (!undefinedObject){
-            postData(url, data);
 
-            document.getElementById("linkedin_success").innerHTML = `connected and sent profile.. ${messageRes.message} `;
-          }
-            else 
-                document.getElementById("linkedin_success").innerHTML = `try refreshing the page and then click here.. ${messageRes.message} `;
+          postData(url, data);
+
+          let undefinedObject = false;
+          const keys = Object.keys(data);
+          keys.forEach((key, index) => {
+            if (data[key] == undefined) {
+              //console.log("Im inside the loopIm inside the loopIm inside the loop",key)
+              //"sessionid =vl7arvmai9tbpy77cv2c7lhainyjhu4f "
+              undefinedObject = true;
+            }
+          });
+
+          //if (!undefinedObject){
+          //postData(url, data);
+
+          //document.getElementById("linkedin_success").innerHTML = `connected and sent profile.. ${messageRes.message} `;
+          //}
+          //else
+          //  document.getElementById("linkedin_success").innerHTML = `try refreshing the page and then click here.. ${messageRes.message} `;
         }
       }
-
     }
   );
 });
@@ -89,7 +105,6 @@ document.getElementById("leadhunt").addEventListener("click", () => {
   //leadhunt session cookie
   //sending message to background and recieving its content
 
-
   chrome.runtime.sendMessage(
     {
       message: "get_leadhunt",
@@ -97,26 +112,33 @@ document.getElementById("leadhunt").addEventListener("click", () => {
     (messageRes) => {
       if (messageRes.message === "success") {
         console.log("success");
-        const url = "http://localhost:5000/api";
+        //const url = "http://localhost:5000/api";
         //posting to url:
-        // const url="http://3.21.190.163/update-liat/";
+        //const url="http://3.21.190.163/create-session/";
+        const url = "http://127.0.0.1:8000/create-session";
+
         if (url) {
           // console.log("this is the object :", messageRes)
 
           let data = { sessionid: messageRes.sessionid };
           console.log("popup sessionid", data);
-          if (messageRes.sessionid != undefined){
-            // postData(url, data);
-            document.getElementById("leadhunt_success").innerHTML = `connected and received cookie.. ${messageRes.message} `;
-          }
-            else 
-              document.getElementById("leadhunt_success").innerHTML = `try refreshing the page and then click here.. ${messageRes.message} `;
-            
+          if (messageRes.sessionid != undefined) {
+            postData(url, data).then((res) => {
+              console.log("thats the response for sessionid ", res);
+              chrome.storage.local.set({ sessionCode: res.sessionCode });
+            });
+            document.getElementById(
+              "leadhunt_success"
+            ).innerHTML = `connected and received cookie.. ${messageRes.message} `;
+          } else
+            document.getElementById(
+              "leadhunt_success"
+            ).innerHTML = `try refreshing the page and then click here.. ${messageRes.message} `;
         }
-        
       }
-    } );
-  });
+    }
+  );
+});
 // POST method implementation:
 const postData = async (url = "", data = {}) => {
   // Default options are marked with *
