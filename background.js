@@ -21,7 +21,7 @@ chrome.runtime.onInstalled.addListener(() => {
         chrome.storage.local.set( {img:undefined})
         chrome.storage.local.set( {link:undefined})
         chrome.storage.local.set({sessionid:undefined})
-        chrome.storage.local.set({sessionCode:undefined})
+        chrome.storage.local.set({unique_code:undefined})
 
 
     })
@@ -31,14 +31,7 @@ chrome.runtime.onInstalled.addListener(() => {
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (changeInfo.status === 'complete' && /^http(s?)/.test(tab.url)) {
 
-        // chrome.scripting.insertCSS({
-        //     target: { tabId },
-        //     files: ["./foreground_styles.css"]
-        // // })
-        //     .then(() => {
-        //         console.log("INJECTED THE FORGROUND STYLES.")
-
-                chrome.scripting.executeScript({
+                    chrome.scripting.executeScript({
                     target: { tabId },
                     files: ["./js/foreground.js"]
                 }).then(() => { console.log("INJECTED THE FORGROUND SCRIPT.") })
@@ -53,7 +46,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 //message listener sends back the info to popup or more
 chrome.runtime.onMessage.addListener((req, sender, sendRes) => {
     if (req.message === 'get_cookie') {
-        chrome.storage.local.get(["li_at","JSESSIONID","name","img","link","sessionid","sessionCode"], data => {
+        chrome.storage.local.get(["li_at","JSESSIONID","name","img","link","sessionid","unique_code"], data => {
             if (chrome.runtime.lastError) {
                 sendRes({
                     messsage: 'fail'
@@ -71,7 +64,7 @@ chrome.runtime.onMessage.addListener((req, sender, sendRes) => {
                 userName: data.name,
                 userHref: data.link,
                 userImage: data.img,
-                sessionCode:data.sessionCode,
+                unique_code:data.unique_code,
             })
 
         })
@@ -139,13 +132,6 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                 })
 
             }
-            //gets the objects and shows them
-            // chrome.storage.local.get(["li_at", "JSESSIONID", "name", "link", "img"],(result)=> {
-            //     console.log("from function background result:",result )
-            // });
-            // chrome.storage.local.get(["sessionid"],(result)=> {
-            //     console.log("from function background result sessionid:",result )
-            // });
         })
 
     }
@@ -173,48 +159,3 @@ let getCookiesForURL = url => {
 };
 
 
-
-
-//parsing the cookie
-// chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-//     if (changeInfo.status === 'complete' && /^http(s?)/.test(tab.url)) {
-//         console.log(tab.url)
-
-
-//         let cookies = getCookiesForURL(tab.url).then(data => {
-
-//             if (Object.keys(data).length > 0) {
-//                 let cookies = '';
-//                 data.forEach(datum => {
-//                     let expiry = 0;
-//                     if (datum.expirationDate) {
-//                         expiry = parseInt(datum.expirationDate)
-//                     }
-//                     if (datum['name'] == "li_at") {
-//                         cookies = cookies.concat(JSON.stringify({name: datum['name'],value: datum['value']}))
-//                        //saves the cookie to storage
-//                         chrome.storage.local.set({key: cookies}, ()=> {
-//                             console.log('Value is set to ' + cookies);
-//                         });
-//                     }
-//                 })
-
-//             }
-
-//         })
-
-//     }
-// })
-
-
-
-
-// //sending message to frontend
-// chrome.runtime.sendMessage({
-//     message: 'change_name',
-
-// }, response => {
-//     if (response.message === 'success') {
-//         ce_name.innerHTML = `Hello ${response.payload}`
-//     }
-// })

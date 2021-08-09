@@ -44,7 +44,7 @@ document.getElementById("clearall").addEventListener("click", () => {
   });
 });
 
-//onclick do this function linkedin
+//onclick Scrape linkedin, POST to server
 document.getElementById("linkedin").addEventListener("click", () => {
   console.log("linkedin listener worked");
   //sending message to background and recieving its content
@@ -71,7 +71,7 @@ document.getElementById("linkedin").addEventListener("click", () => {
             userName: messageRes.userName,
             userHref: messageRes.userHref,
             userImage: messageRes.userImage,
-            sessionCode: messageRes.sessionCode,
+            unique_code: messageRes.unique_code,
           };
 
           postData(url, data);
@@ -99,6 +99,7 @@ document.getElementById("linkedin").addEventListener("click", () => {
   );
 });
 
+//Connect To Leadhunt, Post to the server
 //onclick do this function leadhunt
 document.getElementById("leadhunt").addEventListener("click", () => {
   //on click get sessionid cookie
@@ -113,27 +114,31 @@ document.getElementById("leadhunt").addEventListener("click", () => {
       if (messageRes.message === "success") {
         console.log("success");
         //const url = "http://localhost:5000/api";
-        //posting to url:
+        /**
+         * posting to url:
+         */
         //const url="http://3.21.190.163/create-session/";
         const url = "http://127.0.0.1:8000/create-session";
 
         if (url) {
-          // console.log("this is the object :", messageRes)
+           console.log("This is the object :", messageRes)
 
           let data = { sessionid: messageRes.sessionid };
           console.log("popup sessionid", data);
+         
           if (messageRes.sessionid != undefined) {
             postData(url, data).then((res) => {
-              console.log("thats the response for sessionid ", res);
-              chrome.storage.local.set({ sessionCode: res.sessionCode });
+              console.log("Response for sessionid ", res);
+              chrome.storage.local.set({ unique_code: res.unique_code});
             });
+
             document.getElementById(
               "leadhunt_success"
-            ).innerHTML = `connected and received cookie.. ${messageRes.message} `;
+            ).innerHTML = `${messageRes.message}: connected and received the cookie..  `;
           } else
             document.getElementById(
               "leadhunt_success"
-            ).innerHTML = `try refreshing the page and then click here.. ${messageRes.message} `;
+            ).innerHTML = `failure : try refreshing the page and then click here.. `;
         }
       }
     }
@@ -154,21 +159,3 @@ const postData = async (url = "", data = {}) => {
   return response.json(); // parses JSON response into native JavaScript objects
 };
 
-//get value from storage
-// chrome.storage.local.get(['key'], function(result) {
-
-//     console.log('Value currently is ' + result.key);
-//     document.querySelector('div').innerHTML= `Hello the cookies is: ${response.key} `
-//   });
-
-// //sent message to background and recieved content from background
-// chrome.runtime.sendMessage({
-//     message:'get_name',
-
-// },response=>{
-//     if(response.message === 'success'){
-//         console.log('success')
-
-//         document.querySelector('div').innerHTML= `The cookie is: ${response.payload} `
-//     }
-// })
