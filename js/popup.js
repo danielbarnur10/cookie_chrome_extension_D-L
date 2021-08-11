@@ -1,7 +1,3 @@
-const url_leadhunt = "http://18.118.199.168/connect-extension/";
-const url_linkedin = "http://18.118.199.168/create-liat/"
-/* connect-linkedin */
-
 /**
  * @description of all file: 
  * 
@@ -13,6 +9,17 @@ const url_linkedin = "http://18.118.199.168/create-liat/"
  */
 console.log("I'm the popup.");
 
+/**
+* For @PRODCTION unmark those:
+*/
+// const url_leadhunt = "http://18.118.199.168/connect-extension/";
+// const url_linkedin = "http://18.118.199.168/create-update-liprofile/";
+
+/**
+ *@DEVELOPMENT
+ */
+const url_leadhunt = "http://127.0.0.1:8000/connect-extension/";
+const url_linkedin = "http://127.0.0.1:8000/create-update-liprofile/";
 
 /**
  * 1.
@@ -65,11 +72,12 @@ document.getElementById("linkedin").addEventListener("click", () => {
           };
 
           // postData(url_linkedin, data);
-
+          console.log("data Linkedin ", data)
           let undefinedObject = false;
           const keys = Object.keys(data);
           keys.forEach((key, index) => {
             if (data[key] == undefined) {
+              console.log("error ", data[key])
               undefinedObject = true;
             }
           });
