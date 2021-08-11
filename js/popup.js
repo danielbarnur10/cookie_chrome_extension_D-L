@@ -1,39 +1,25 @@
-// const login = require('./login.js')
-
 /**
- * This file includes:
- * 1. sendMessage() sending message to background.js function with get_cookie message.
- * 2. postData() : POSTS the data from the local storage of the chrome.
+ * @description of all file: 
+ * 
+ * 1. Popup window to leadhunt web.
+ * 2.Clear storage button.
+ * 3. Scraper for data and post to server.
+ * 4. Connect to LeadHunt web with post request.
+ * 5. POST method.
  */
 console.log("I'm the popup.");
 
-//popup link to leadhunt
-document.getElementById("popup").addEventListener("click", () => {
-  let w = 780,
-    h = 600,
-    scroll = "yes";
-  let winName = "popup",
-    url = "http://18.119.98.104";
 
-  LeftPosition = screen.width ? (screen.width - w) / 2 : 0;
-  TopPosition = screen.height ? (screen.height - h) / 2 : 0;
-  settings =
-    "height=" +
-    h +
-    ",width=" +
-    w +
-    ",top=" +
-    TopPosition +
-    ",left=" +
-    LeftPosition +
-    ",scrollbars=" +
-    scroll +
-    ",resizable";
-  window.open(url, winName, settings);
-  return false;
-});
+/**
+ * 1.
+ *@description popup window to leadhunt
+*/
+document.getElementById("popup").addEventListener("click", () => {   window.open("http://18.119.98.104", "_blank");});
 
-//clear data button
+/**
+ * 2.
+ * @description clear data button
+ */
 document.getElementById("clearall").addEventListener("click", () => {
   chrome.storage.local.clear(() => {
     var error = chrome.runtime.lastError;
@@ -44,7 +30,10 @@ document.getElementById("clearall").addEventListener("click", () => {
   });
 });
 
-//onclick Scrape linkedin, POST to server
+/**
+ * 3.
+ * @description onclick Scrape linkedin, POST to server
+ */
 document.getElementById("linkedin").addEventListener("click", () => {
   console.log("linkedin listener worked");
   //sending message to background and recieving its content
@@ -56,11 +45,10 @@ document.getElementById("linkedin").addEventListener("click", () => {
       if (messageRes.message === "success") {
         console.log("success");
 
-        //const url = "http://localhost:5000/api";
-
+       
         // const url="http://3.21.190.163/update-liat/";//send to production
 
-        const url = `http://127.0.0.1:8000/create-liat`; //test  ${messageRes.userHref}
+        const url = `http://127.0.0.1:8000/create-liat/`; //test  ${messageRes.userHref}
         if (url) {
           // console.log("this is the object :", messageRes)
 
@@ -80,26 +68,27 @@ document.getElementById("linkedin").addEventListener("click", () => {
           const keys = Object.keys(data);
           keys.forEach((key, index) => {
             if (data[key] == undefined) {
-              //console.log("Im inside the loopIm inside the loopIm inside the loop",key)
-              //"sessionid =vl7arvmai9tbpy77cv2c7lhainyjhu4f "
               undefinedObject = true;
             }
           });
 
-          //if (!undefinedObject){
-          //postData(url, data);
+          if (!undefinedObject){
+            postData(url, data);
 
-          //document.getElementById("linkedin_success").innerHTML = `connected and sent profile.. ${messageRes.message} `;
-          //}
-          //else
-          //  document.getElementById("linkedin_success").innerHTML = `try refreshing the page and then click here.. ${messageRes.message} `;
+          document.getElementById("linkedin_success").innerHTML = `connected and sent profile.. ${messageRes.message} `;
+          }
+          else
+           document.getElementById("linkedin_success").innerHTML = `try refreshing the page and then click here.. ${messageRes.message} `;
         }
       }
     }
   );
 });
 
-//Connect To Leadhunt, Post to the server
+/**
+ * 4.
+ *@description Connect To Leadhunt, Post to the server
+*/
 //onclick do this function leadhunt
 document.getElementById("leadhunt").addEventListener("click", () => {
   //on click get sessionid cookie
@@ -118,7 +107,7 @@ document.getElementById("leadhunt").addEventListener("click", () => {
          * posting to url:
          */
         //const url="http://3.21.190.163/create-session/";
-        const url = "http://127.0.0.1:8000/create-session";
+        const url = "http://127.0.0.1:8000/connect-extension/";
 
         if (url) {
            console.log("This is the object :", messageRes)
@@ -144,7 +133,10 @@ document.getElementById("leadhunt").addEventListener("click", () => {
     }
   );
 });
-// POST method implementation:
+/**
+ * 5.
+ * @description POST method implementation:
+ */
 const postData = async (url = "", data = {}) => {
   // Default options are marked with *
   console.log("data check on the POST", data);
