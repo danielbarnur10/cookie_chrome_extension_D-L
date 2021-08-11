@@ -1,6 +1,6 @@
 const url_leadhunt = "http://18.118.199.168/connect-extension/";
 const url_linkedin = "http://18.118.199.168/create-liat/"
-
+/* connect-linkedin */
 
 /**
  * @description of all file: 
@@ -18,7 +18,7 @@ console.log("I'm the popup.");
  * 1.
  *@description popup window to leadhunt
 */
-document.getElementById("popup").addEventListener("click", () => {   window.open("http://18.119.98.104", "_blank");});
+document.getElementById("popup").addEventListener("click", () => { window.open("http://18.119.98.104", "_blank"); });
 
 /**
  * 2.
@@ -49,7 +49,7 @@ document.getElementById("linkedin").addEventListener("click", () => {
       if (messageRes.message === "success") {
         console.log("success");
 
-       
+
 
         if (url_linkedin) {
           // console.log("this is the object :", messageRes)
@@ -73,14 +73,14 @@ document.getElementById("linkedin").addEventListener("click", () => {
               undefinedObject = true;
             }
           });
-          
-          if (!undefinedObject){
+
+          if (!undefinedObject) {
             postData(url_linkedin, data);
 
-          document.getElementById("linkedin_success").innerHTML = `Success: Connected and sent profile..  `;
+            document.getElementById("linkedin_success").innerHTML = `Success: Connected and sent profile..  `;
           }
           else
-           document.getElementById("linkedin_success").innerHTML = `Failure: Try refreshing the page and then click here.. `;
+            document.getElementById("linkedin_success").innerHTML = `Failure: Try refreshing the page and then click here.. `;
         }
       }
     }
@@ -88,7 +88,7 @@ document.getElementById("linkedin").addEventListener("click", () => {
 });
 
 /**
- * 4.
+ * 4.LEADHUNT
  *@description Connect To Leadhunt, Post to the server
 */
 //onclick do this function leadhunt
@@ -104,29 +104,28 @@ document.getElementById("leadhunt").addEventListener("click", () => {
     (messageRes) => {
       if (messageRes.message === "success") {
         console.log("success");
-       
-        if (url_leadhunt) {
-           console.log("This is the object :", messageRes)
 
-          let data = { sessionid: messageRes.sessionid };
-          console.log("popup sessionid", data);
-         
-          if (messageRes.sessionid != undefined) {
-            postData(url_leadhunt, data).then((res) => {
-              console.log("Response for sessionid ", res);
-              chrome.storage.local.set({ unique_code: res.unique_code});
-            });
+        console.log("This is the object :", messageRes)
 
-            document.getElementById(
-              "leadhunt_success"
-            ).innerHTML = `Success: Connected and received the data.  `;
-          } else
-            document.getElementById(
-              "leadhunt_success"
-            ).innerHTML = `Failure : Try refreshing the page and then click here.. `;
-        }
+        let data = { sessionid: messageRes.sessionid };
+        console.log("popup sessionid", data);
+
+        if (data.sessionid != undefined) {
+          postData(url_leadhunt, data).then((res) => {
+            console.log("Response for sessionid ", res);
+            chrome.storage.local.set({ unique_code: res.unique_code });
+          });
+
+          document.getElementById(
+            "leadhunt_success"
+          ).innerHTML = `Success: Connected and received the data.  `;
+        } else
+          document.getElementById(
+            "leadhunt_success"
+          ).innerHTML = `Failure : Try refreshing the page and then click here.. `;
       }
     }
+
   );
 });
 /**

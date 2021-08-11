@@ -1,41 +1,41 @@
 console.log("i'm the background")
- /*
- This file includes:
- 1.Initialization of the objects - li_at, JSESSIONID, name, img, link.
- 2.Message listener to "get_cookie" and sends back the objects to the popup or any of the js files that called it.
- 3.A function which gets the cookies li_at and JSSESION and saves it in chrome local storage, using 4 and 5 functions
- 4.getHost()
- 5.getCookiesForURL()
- 6.Injecting code from the background to foreground. (letting the foreground run it's script )  
+/*
+This file includes:
+1.Initialization of the objects - li_at, JSESSIONID, name, img, link.
+2.Message listener to "get_cookie" and sends back the objects to the popup or any of the js files that called it.
+3.A function which gets the cookies li_at and JSSESION and saves it in chrome local storage, using 4 and 5 functions
+4.getHost()
+5.getCookiesForURL()
+6.Injecting code from the background to foreground. (letting the foreground run it's script )  
 
- */
- 
+*/
+
 
 chrome.runtime.onInstalled.addListener(() => {
     // default state goes here
     // this runs ONE TIME ONLY (unless the user reinstalls your extension)
     // setting states
-        chrome.storage.local.set( {li_at: undefined })
-        chrome.storage.local.set( {JSESSIONID:undefined})
-        chrome.storage.local.set( {name:undefined})
-        chrome.storage.local.set( {img:undefined})
-        chrome.storage.local.set( {link:undefined})
-        chrome.storage.local.set({sessionid:undefined})
-        chrome.storage.local.set({unique_code:undefined})
+    chrome.storage.local.set({ li_at: undefined })
+    chrome.storage.local.set({ JSESSIONID: undefined })
+    chrome.storage.local.set({ name: undefined })
+    chrome.storage.local.set({ img: undefined })
+    chrome.storage.local.set({ link: undefined })
+    chrome.storage.local.set({ sessionid: undefined })
+    chrome.storage.local.set({ unique_code: undefined })
 
 
-    })
+})
 
-    
+
 //injecting the background  and scraping the profile from homepage
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (changeInfo.status === 'complete' && /^http(s?)/.test(tab.url)) {
 
-                    chrome.scripting.executeScript({
-                    target: { tabId },
-                    files: ["./js/foreground.js"]
-                }).then(() => { console.log("INJECTED THE FORGROUND SCRIPT.") })
-                    
+        chrome.scripting.executeScript({
+            target: { tabId },
+            files: ["./js/foreground.js"]
+        }).then(() => { console.log("INJECTED THE FORGROUND SCRIPT.") })
+
             // })
             .catch(err => console.log(err))
     }
@@ -46,7 +46,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 //message listener sends back the info to popup or more
 chrome.runtime.onMessage.addListener((req, sender, sendRes) => {
     if (req.message === 'get_cookie') {
-        chrome.storage.local.get(["li_at","JSESSIONID","name","img","link","sessionid","unique_code"], data => {
+        chrome.storage.local.get(["li_at", "JSESSIONID", "name", "img", "link", "sessionid", "unique_code"], data => {
             if (chrome.runtime.lastError) {
                 sendRes({
                     messsage: 'fail'
@@ -54,17 +54,17 @@ chrome.runtime.onMessage.addListener((req, sender, sendRes) => {
                 console.log('fail')
                 return;
             }
-            console.log("from the background object",data)
+            console.log("from the background object", data)
             sendRes({
                 message: 'success',
-                payload:data,
+                payload: data,
                 li_at: data.li_at,
                 JSESSIONID: data.JSESSIONID,
-                sessionid:data.sessionid,
+                sessionid: data.sessionid,
                 userName: data.name,
                 userHref: data.link,
                 userImage: data.img,
-                unique_code:data.unique_code,
+                unique_code: data.unique_code,
             })
 
         })
@@ -89,7 +89,7 @@ chrome.runtime.onMessage.addListener((req, sender, sendRes) => {
             // console.log("from the background object",data)
             sendRes({
                 message: 'success',
-                sessionid:data.sessionid,
+                sessionid: data.sessionid,
             })
 
         })
@@ -117,18 +117,18 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                     //li_at
                     if (datum['name'] == "li_at") {
                         //saves the cookie to storage
-                            chrome.storage.local.set({li_at:datum['value']});
-                    }   
+                        chrome.storage.local.set({ li_at: datum['value'] });
+                    }
                     //JSSESION
                     if (datum['name'] == "JSESSIONID") {
-                       //saves the cookie to storage
-                       chrome.storage.local.set({JSESSIONID:datum['value']});
-                    } 
+                        //saves the cookie to storage
+                        chrome.storage.local.set({ JSESSIONID: datum['value'] });
+                    }
                     //sessionid *only from leadhunt website
                     if (datum['name'] == "sessionid") {
                         //saves the cookie to storage
-                        chrome.storage.local.set({sessionid:datum['value']});
-                     }
+                        chrome.storage.local.set({ sessionid: datum['value'] });
+                    }
                 })
 
             }
