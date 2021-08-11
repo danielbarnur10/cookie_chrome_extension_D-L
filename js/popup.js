@@ -1,3 +1,7 @@
+const url_leadhunt = "http://18.118.199.168/connect-extension/";
+const url_linkedin = "http://18.118.199.168/create-liat/"
+
+
 /**
  * @description of all file: 
  * 
@@ -36,7 +40,7 @@ document.getElementById("clearall").addEventListener("click", () => {
  */
 document.getElementById("linkedin").addEventListener("click", () => {
   console.log("linkedin listener worked");
-  //sending message to background and recieving its content
+  //sending message to background and receiving its content
   chrome.runtime.sendMessage(
     {
       message: "get_cookie",
@@ -46,10 +50,8 @@ document.getElementById("linkedin").addEventListener("click", () => {
         console.log("success");
 
        
-        // const url="http://3.21.190.163/update-liat/";//send to production
 
-        const url = `http://127.0.0.1:8000/create-liat/`; //test  ${messageRes.userHref}
-        if (url) {
+        if (url_linkedin) {
           // console.log("this is the object :", messageRes)
 
           let data = {
@@ -62,7 +64,7 @@ document.getElementById("linkedin").addEventListener("click", () => {
             unique_code: messageRes.unique_code,
           };
 
-          postData(url, data);
+          // postData(url_linkedin, data);
 
           let undefinedObject = false;
           const keys = Object.keys(data);
@@ -71,14 +73,14 @@ document.getElementById("linkedin").addEventListener("click", () => {
               undefinedObject = true;
             }
           });
-
+          
           if (!undefinedObject){
-            postData(url, data);
+            postData(url_linkedin, data);
 
-          document.getElementById("linkedin_success").innerHTML = `connected and sent profile.. ${messageRes.message} `;
+          document.getElementById("linkedin_success").innerHTML = `Success: Connected and sent profile..  `;
           }
           else
-           document.getElementById("linkedin_success").innerHTML = `try refreshing the page and then click here.. ${messageRes.message} `;
+           document.getElementById("linkedin_success").innerHTML = `Failure: Try refreshing the page and then click here.. `;
         }
       }
     }
@@ -102,32 +104,26 @@ document.getElementById("leadhunt").addEventListener("click", () => {
     (messageRes) => {
       if (messageRes.message === "success") {
         console.log("success");
-        //const url = "http://localhost:5000/api";
-        /**
-         * posting to url:
-         */
-        //const url="http://3.21.190.163/create-session/";
-        const url = "http://127.0.0.1:8000/connect-extension/";
-
-        if (url) {
+       
+        if (url_leadhunt) {
            console.log("This is the object :", messageRes)
 
           let data = { sessionid: messageRes.sessionid };
           console.log("popup sessionid", data);
          
           if (messageRes.sessionid != undefined) {
-            postData(url, data).then((res) => {
+            postData(url_leadhunt, data).then((res) => {
               console.log("Response for sessionid ", res);
               chrome.storage.local.set({ unique_code: res.unique_code});
             });
 
             document.getElementById(
               "leadhunt_success"
-            ).innerHTML = `${messageRes.message}: connected and received the cookie..  `;
+            ).innerHTML = `Success: Connected and received the data.  `;
           } else
             document.getElementById(
               "leadhunt_success"
-            ).innerHTML = `failure : try refreshing the page and then click here.. `;
+            ).innerHTML = `Failure : Try refreshing the page and then click here.. `;
         }
       }
     }
