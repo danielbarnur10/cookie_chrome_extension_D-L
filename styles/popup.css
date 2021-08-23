@@ -1,6 +1,6 @@
 body {
   width: 270px;
-  height: 170px;
+  height: 220px;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -24,15 +24,15 @@ body {
 
 .tooltip .tooltiptext {
   visibility: hidden;
-  width: 120px;
+  width: 139px;
   background-color: black;
   color: #fff;
-  text-align: center;
+  text-align: left;
   border-radius: 6px;
   padding: 5px 0;
+  position: absolute;
 
   /* Position the tooltip */
-  position: absolute;
   z-index: 1;
   top: 100%;
   left: 50%;
