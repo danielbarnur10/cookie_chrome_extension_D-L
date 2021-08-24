@@ -12,14 +12,14 @@ console.log("I'm the popup.");
 /**
 * For @PRODCTION unmark those:
 */
-// const url_leadhunt = "http://18.118.199.168  /connect-extension/";
-// const url_linkedin = "http://18.118.199.168  /create-update-liprofile/";
+const url_leadhunt = "http://18.118.199.168  /connect-extension/";
+const url_linkedin = "http://18.118.199.168  /create-update-liprofile/";
 
 /**
  *@DEVELOPMENT
  */
-const url_leadhunt = "http://127.0.0.1:8000/connect-extension/";
-const url_linkedin = "http://127.0.0.1:8000/create-update-liprofile/";
+// const url_leadhunt = "http://127.0.0.1:8000/connect-extension/";
+// const url_linkedin = "http://127.0.0.1:8000/create-update-liprofile/";
 
 /**
  * 1.
