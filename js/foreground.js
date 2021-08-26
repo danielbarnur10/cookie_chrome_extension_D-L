@@ -28,8 +28,8 @@ if (window.location.href.match("linkedin.com")) {
     let fullName = firstName.concat(" ", lastName);
 
     //link
-    let userUrl = "https://www.linkedin.com/in/".concat(includedData.publicIdentifier);
-
+    let userUrl = "https://www.linkedin.com/in/".concat(includedData.publicIdentifier,'/');
+    
     //image
     includedData.picture.artifacts.forEach(element => {
         if (element.width == 200)
