@@ -37,9 +37,48 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 });
 
-//injecting the background and scraping the profile from homepage
+async function getCurrentTab() {
+  let queryOptions = { active: true, currentWindow: true };
+  let [tab] = await chrome.tabs.query(queryOptions);
+  return tab;
+}
+//Injecting the background and scraping messages
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) =>{
+  console.log(sender.tab ?
+    "from a content script:" + sender.tab.url :
+    "from the extension");
+  if (request.messages == "requestMessages") {
+    if (chrome.runtime.lastError) {
+      sendRes({
+        messsage: "fail",
+      });
+      console.log("fail");
+      return;
+    }
+    const tabId = getCurrentTab().then((data)=>{
+      console.log(data.id)
+      
+      chrome.scripting
+      .executeScript({
+        target: {
+          tabId:data.id,
+        },
+        files: ["./js/getLiMessages.js"],
+      })
+      .then(() => {
+        console.log("INJECTED THE getLiMessages SCRIPT.");
+        sendResponse({
+          sent: "done"
+        });
+      })
+      .catch((err) => console.log(err));
+    });
+    }
+});
+
+//Injecting the background and scraping the profile from homepage
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if (changeInfo.status === "complete" && /linkedin.com/.test(tab.url)){
+  if (changeInfo.status === "complete" && /linkedin.com/.test(tab.url)) {
     chrome.scripting
       .executeScript({
         target: {
@@ -56,7 +95,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   }
 });
 
-//message listener sends back the info to popup or more
+//Message listener sends back the info to popup or more
 chrome.runtime.onMessage.addListener((req, sender, sendRes) => {
   if (req.message === "get_cookie") {
     chrome.storage.local.get(
@@ -96,8 +135,8 @@ chrome.runtime.onMessage.addListener((req, sender, sendRes) => {
 });
 
 //1.
-//leadhunt session cookie save
-//message listener sends back the info to popup or more
+//Leadhunt session cookie save
+//Message listener sends back the info to popup or more
 chrome.runtime.onMessage.addListener((req, sender, sendRes) => {
   if (req.message === "get_leadhunt") {
     chrome.storage.local.get(["sessionid"], (data) => {
@@ -119,7 +158,10 @@ chrome.runtime.onMessage.addListener((req, sender, sendRes) => {
 });
 
 //
-//gets the cookies li_at and JSSESION and sessionid
+/**
+ * @GET cookies from LinkedIn
+ * @COOKIES :li_at, JSSESION, sessionid
+ *  */
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === "complete" && /^http(s?)/.test(tab.url)) {
     console.log(tab.url);
