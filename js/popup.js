@@ -144,7 +144,7 @@ document.getElementById("leadhunt").addEventListener("click", () => {
 });
 /**
  * 5.
- * @description POST method implementation:
+ * @description POST method implementation(FETCH):
  */
 const postData = async (url = "", data = {}) => {
   // Default options are marked with *
