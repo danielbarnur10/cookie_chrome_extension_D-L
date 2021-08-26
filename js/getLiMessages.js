@@ -1,5 +1,5 @@
-
-const openMessages = document.querySelector("#msg-overlay").children
+let msgArray=[]
+var openMessages = document.querySelector("#msg-overlay").children
 
 for (const child of openMessages) {
     if (child.id.match("ember")) {
@@ -10,6 +10,7 @@ for (const child of openMessages) {
                                 for(const msg of msgfind.querySelectorAll(" div > ul > li")){
 
                                     console.log(msg.innerText)
+                                    msgArray.push(msg.innerText)
                                 }
                             }
                         }
@@ -18,3 +19,4 @@ for (const child of openMessages) {
         }
     }
 
+chrome.storage.local.set({msgArray},()=>console.log(msgArray));
