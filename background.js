@@ -48,13 +48,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) =>{
     "from a content script:" + sender.tab.url :
     "from the extension");
   if (request.messages == "requestMessages") {
-    if (chrome.runtime.lastError) {
-      sendRes({
-        messsage: "fail",
-      });
-      console.log("fail");
-      return;
-    }
+   
     const tabId = getCurrentTab().then((data)=>{
       console.log(data.id)
       
@@ -67,13 +61,26 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) =>{
       })
       .then(() => {
         console.log("INJECTED THE getLiMessages SCRIPT.");
-        sendResponse({
-          sent: "done"
-        });
+        chrome.storage.local.get("conversation",(payload)=>{
+          if (chrome.runtime.lastError) {
+            sendResponse({
+              messsage: "fail",
+            });
+            console.log("fail");
+            return;
+          }
+
+          sendResponse({
+            sent: "success",
+            conversation : payload.conversation,
+          });
+        })
       })
       .catch((err) => console.log(err));
     });
-    }
+    }    
+    return true;
+
 });
 
 //Injecting the background and scraping the profile from homepage

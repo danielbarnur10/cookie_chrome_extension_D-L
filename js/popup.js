@@ -161,7 +161,8 @@ const postData = async (url = "", data = {}) => {
 };
 
 document.getElementById("messages").addEventListener("click", () => {
+  console.log("pressed")
   chrome.runtime.sendMessage({messages:"requestMessages"}, (response)=> {
-    console.log(response.sent);
+    console.log(response);
   });
 });
