@@ -26,7 +26,7 @@ const url_linkedin = "http://127.0.0.1:8000/create-update-liprofile/";
  * 1.
  *@description popup window to leadhunt
 */
-document.getElementById("popup").addEventListener("click", () => { window.open("http://18.118.199.168", "_blank"); });
+document.getElementById("popup").addEventListener("click", () => { window.open("http://leadhunt.services/", "_blank"); });
 
 /**
  * 2.
